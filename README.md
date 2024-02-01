@@ -1,6 +1,9 @@
 # project-arthemore
+ Arthemore Official Website project hosted on Firebase https://arthemore-5c403.web.app/#/
+This is SPA pending project for Arthemore music band. It includes news, gallery, discography and potencial shop with clothes. Currently shop is being modificated - for the date 01.02 option to choose parcel locker from Inpost API has been added. 
+Due to secure databse the firebase.js config file is empty.
+Technologies used for develope: Vue 3, Vue router, Pinia, Firebase, Bulma CSS. 
 
-This template should help get you started developing with Vue 3 in Vite.
 
 ## Recommended IDE Setup
 
