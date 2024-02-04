@@ -1,8 +1,8 @@
 <template>
 	<div class="section modal-wrapper pt-2" aria-modal="true">
-		<div class="is-flex is-flex-direction-column is-justify-content-center is-align-items-center">
+		<div class="orderBox is-flex is-flex-direction-column is-justify-content-center is-align-items-center">
 			<div class="is-flex is-flex-direction-column is-justify-content-center is-align-items-center mt-4">
-				<h1 class="title has-text-centered has-text-black">Twoje zamówienie</h1>
+				<h1 class="title has-text-centered has-text-primary">Twoje zamówienie</h1>
 				<div
 					class="item-container py-1 px-2 is-flex is-flex-direction-row is-justify-content-space-evenly is-align-items-center is-flex-wrap-wrap"
 					v-for="(item, index) in storeShoppingBag.itemsInBag"
@@ -25,10 +25,10 @@
 					<div class="separate my-2 has-background-light"></div>
 				</div>
 				<div class="my-3 is-flex is-flex-direction-column is-justify-content-space-around is-align-items-start">
-					<h2 class="is-size-6 has-text-black">Podsumowanie:</h2>
+					<h2 class="is-size-6 has-text-primary">Podsumowanie:</h2>
 					<p class="is-size-6">Ilość: {{ storeShoppingBag.totalItems }}</p>
 					<p class="is-size-6 has-text-weight-bold">Do zapłaty: {{ storeShoppingBag.total }} zł</p>
-					<p>Cena zawiera przesyłkę inPost!</p>
+					<p>Cena zawiera przesyłkę inPost: 16zł!</p>
 				</div>
 			</div>
 
@@ -119,9 +119,8 @@ const rules = computed(() => {
 const v$ = useVuelidate(rules, formData)
 
 const submitForm = async () => {
-	console.log(formData.machineBoxChosen)
 	const result = await v$.value.$validate()
-	if (result && formData.machineBoxChosen && !storeShoppingBag.itemsInBag) {
+	if (result && formData.machineBoxChosen && storeShoppingBag.itemsInBag.length>0) {
 		storeShoppingBag.sendOrder(
 			formData.nameData,
 			formData.phoneNumber,
@@ -147,19 +146,29 @@ p,
 h1,
 h2,
 label {
-	color: black;
+	color: lightgray;
 	font-family: 'Sawarabi Gothic', sans-serif;
 }
 .incorrectData {
 	border: 0.1em solid crimson;
+}
+
+.orderBox {
+	margin: 0 auto;
+	width: 20em;
+	background-color: #070707e0;
+	box-shadow: 0 0 1em cyan;
+	border-radius: 0.3em;
+	.field{
+		width: 100%;
+	}
 }
 .modal-wrapper {
 	position: fixed;
 	left: 0;
 	height: 100vh;
 	width: 100vw;
-	background-color: #100f0fdf;
-	background-image: linear-gradient(90deg, #32323292 3%, #ffffffdb 60%);
+	background-color: #000000da;
 	z-index: 500;
 	overflow: auto;
 	.item-container,
@@ -180,5 +189,10 @@ label {
 			height: 0.12em;
 		}
 	}
+}
+@media (min-width: 992px){
+	.orderBox {
+	width: 32em;
+}
 }
 </style>
