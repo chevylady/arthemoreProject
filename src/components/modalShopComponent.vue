@@ -121,7 +121,7 @@ const v$ = useVuelidate(rules, formData)
 const submitForm = async () => {
 	console.log(formData.machineBoxChosen)
 	const result = await v$.value.$validate()
-	if (result && formData.machineBoxChosen) {
+	if (result && formData.machineBoxChosen && !storeShoppingBag.itemsInBag) {
 		storeShoppingBag.sendOrder(
 			formData.nameData,
 			formData.phoneNumber,
@@ -130,9 +130,9 @@ const submitForm = async () => {
 			storeShoppingBag.itemsInBag,
 			storeShoppingBag.total
 		),
-			alert('wyslano')
+			alert('Wysłano!')
 	} else {
-		alert('dupa')
+		alert('Sprawdź swoje zamówienie')
 	}
 }
 
