@@ -1,27 +1,30 @@
 <template>
 	<div class="inpostApi-wrapper py-1">
 		<div class="field">
-			<h3 class="has-text-black is-size-6 is-size-5-desktop mb-2">Wyszukaj swój paczkomat</h3>
-			<label for="city" class="label has-text-black is-size-6 is-size-5-desktop" name="city">Miejscowość:</label>
+			<h3 class="has-text-black is-size-6 is-size-5-desktop mb-2 has-text-primary">Wyszukaj swój paczkomat</h3>
+			<label for="city" class="label has-text-black is-size-6 is-size-5-desktop has-text-light" name="city"
+				>Miejscowość:</label
+			>
 			<div class="control is-flex is-align-items-center">
 				<input v-model="typeCity" class="input" type="text" name="city" placeholder="szukaj w miejscowości" />
 				<button class="button" @click="getInPostLocations()"><img src="../assets/graphics/handy.png" alt="" /></button>
 			</div>
 		</div>
 		<div v-if="machineCity" class="field">
-			<label for="details" class="label has-text-black is-size-6 is-size-5-desktop" name="details"
+			<label for="details" class="label has-text-black is-size-6 is-size-5-desktop has-text-light" name="details"
 				>Paczkomaty w miejscowości {{ machineCity }}:</label
 			>
 			<div class="select">
 				<select v-model="choosenMachine">
 					<option value="">-wybierz paczkomat-</option>
-					<option @click="$emit('setMachine', machineBox)" v-for="machineBox in machineName" :key="machineBox">
+					<option @click="$emit('setMachine', choosenMachine)" v-for="machineBox in machineName" :key="machineBox">
 						{{ machineBox }}
 					</option>
 				</select>
 			</div>
 		</div>
 	</div>
+	<small v-if="choosenMachine">Wybrany: {{ choosenMachine }}</small>
 </template>
 <script setup>
 import { ref } from 'vue'
@@ -56,7 +59,7 @@ const getInPostLocations = () => {
 }
 </script>
 <style lang="scss" scoped>
-option {
+option, select {
 	width: 100%;
 }
 img {
