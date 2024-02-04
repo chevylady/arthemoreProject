@@ -28,55 +28,59 @@
 					<h2 class="is-size-6 has-text-black">Podsumowanie:</h2>
 					<p class="is-size-6">Ilość: {{ storeShoppingBag.totalItems }}</p>
 					<p class="is-size-6 has-text-weight-bold">Do zapłaty: {{ storeShoppingBag.total }} zł</p>
-					<p>koszt wysyłki: paczkomat InPost +15zł</p>
+					<p>Cena zawiera przesyłkę inPost!</p>
 				</div>
 			</div>
 
 			<div class="form mt-4">
 				<div class="field">
-					<label class="label">Imię i nazwisko</label>
+					<label class="label" for="name">Imię i nazwisko</label>
 					<div class="control">
-						<input v-model="nameData" class="input" type="text" placeholder="imię i nazwisko" />
+						<input
+							v-model="formData.nameData"
+							name="name"
+							class="input"
+							:class="{ incorrectData: v$.nameData.$error }"
+							type="text"
+							placeholder="imię i nazwisko" />
 					</div>
 				</div>
 				<div class="field">
-					<label class="label">Numer telefonu</label>
+					<label class="label" for="phone">Numer telefonu</label>
 					<div class="control">
-						<input v-model="phoneNumber" class="input" type="text" placeholder="+48123456789" />
+						<input
+							v-model="formData.phoneNumber"
+							name="phoneNumber"
+							class="input"
+							:class="{ incorrectData: v$.phoneNumber.$error }"
+							type="text"
+							placeholder="123456789" />
 					</div>
 				</div>
 				<div class="field">
-					<label class="label">Email</label>
+					<label class="label" for="email">Email</label>
 					<div class="control">
-						<input v-model="emailAddress" class="input is-danger" type="email" placeholder="Email@test.com" />
+						<input
+							v-model="formData.emailAddress"
+							class="input"
+							name="email"
+							:class="{ incorrectData: v$.emailAddress.$error }"
+							type="email"
+							placeholder="Email@examp.com" />
 					</div>
-					<p class="help is-danger">This email is invalid</p>
 				</div>
-				<inpostApiComponent />
+				<inpostApiComponent @setMachine="setMachine" />
 			</div>
 			<div class="mx-6 my-5 is-flex">
 				<button @click="storeShop.modal = false" class="button is-small is-info is-light mx-1">Wróć</button>
-				<button
-					@click="
-						storeShoppingBag.sendOrder(
-							nameData,
-							emailAddress,
-							phoneNumber,
-							storeShoppingBag.itemsInBag,
-							storeShoppingBag.total
-						)
-					"
-					class="button is-small is-success is-light mx-1">
-					Wyślij
-				</button>
+				<button @click="submitForm()" class="button is-small is-success is-light mx-1">Wyślij</button>
 				<button @click="clearForm(), (storeShop.modal = false)" class="button is-small is-danger is-light mx-1">
 					Wyczyść
 				</button>
 			</div>
 			<div class="info-box mx-4 mb-5 pb-5">
-				<p class="px-5 pb-5 is-size-6">
-					Po wysłaniu zamówienia poprzez formularz skontaktujemy się z Tobą. Otrzymasz wiadomość zwrotną z informacjami
-					dotyczącymi płatności i wysyłki.
+				<p class="px-2 mb-2 pb-5 is-size-6">
+					Po wysłaniu zamówienia na Twój email zostaną wysłane informacje dotyczące płatności i wysyłki.
 				</p>
 			</div>
 		</div>
@@ -85,20 +89,57 @@
 <script setup>
 import { useShop } from '../stores/shop'
 import { useShoppingBag } from '../stores/shoppingBag'
-import { ref } from 'vue'
 import inpostApiComponent from './inpostApiComponent.vue'
+import { reactive, computed } from 'vue'
+import { useVuelidate } from '@vuelidate/core'
+import { required, email, numeric, minLength } from '@vuelidate/validators'
 
 const storeShop = useShop()
 const storeShoppingBag = useShoppingBag()
 
-const phoneNumber = ref(null)
-const nameData = ref('')
-const emailAddress = ref('')
+function setMachine(machineBox) {
+	formData.machineBoxChosen = machineBox
+}
+
+const formData = reactive({
+	nameData: '',
+	phoneNumber: null,
+	emailAddress: '',
+	machineBoxChosen: '',
+})
+
+const rules = computed(() => {
+	return {
+		nameData: { required, minLength: minLength(5) },
+		phoneNumber: { required, numeric },
+		emailAddress: { required, email },
+		machineBoxChosen: { required },
+	}
+})
+const v$ = useVuelidate(rules, formData)
+
+const submitForm = async () => {
+	console.log(formData.machineBoxChosen)
+	const result = await v$.value.$validate()
+	if (result && formData.machineBoxChosen) {
+		storeShoppingBag.sendOrder(
+			formData.nameData,
+			formData.phoneNumber,
+			formData.emailAddress,
+			formData.machineBoxChosen,
+			storeShoppingBag.itemsInBag,
+			storeShoppingBag.total
+		),
+			alert('wyslano')
+	} else {
+		alert('dupa')
+	}
+}
 
 const clearForm = () => {
-	phoneNumber.value = null
-	nameData.value = ''
-	emailAddress.value = ''
+	formData.phoneNumber = null
+	formData.nameData = ''
+	formData.email = ''
 }
 </script>
 <style lang="scss" scoped>
@@ -108,6 +149,9 @@ h2,
 label {
 	color: black;
 	font-family: 'Sawarabi Gothic', sans-serif;
+}
+.incorrectData {
+	border: 0.1em solid crimson;
 }
 .modal-wrapper {
 	position: fixed;
