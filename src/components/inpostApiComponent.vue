@@ -12,10 +12,12 @@
 			<label for="details" class="label has-text-black is-size-6 is-size-5-desktop" name="details"
 				>Paczkomaty w miejscowości {{ machineCity }}:</label
 			>
-			<div class="select is-primary">
+			<div class="select">
 				<select v-model="choosenMachine">
 					<option value="">-wybierz paczkomat-</option>
-					<option v-for="machineBox in machineName" :key="machineBox">{{ machineBox }}</option>
+					<option @click="$emit('setMachine', machineBox)" v-for="machineBox in machineName" :key="machineBox">
+						{{ machineBox }}
+					</option>
 				</select>
 			</div>
 		</div>
@@ -30,6 +32,9 @@ const typeCity = ref('')
 const machineCity = ref('')
 const machineName = ref([])
 let machineLocations = ref([])
+
+// eslint-disable-next-line no-unused-vars
+const emit = defineEmits(['setMachine'])
 
 const getInPostLocations = () => {
 	machineName.value = []
