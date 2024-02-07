@@ -1,9 +1,7 @@
 <template>
-	<section
-		class="section has-background-black pt-0"
-		:class="{ 'stopScroll' : storeShop.modal }">
+	<section class="section py-0 px-0 has-background-black">
 		<modalShopComponent v-if="storeShop.modal" class="showBag" />
-		<div class="wrapper">
+		<div class="wrapper" :class="{ stopScroll: storeShop.modal }">
 			<div class="btn-bag is-flex is-justify-content-end">
 				<button @click="storeShop.modal = true" class="button is-small is-info">
 					<i class="fa-solid fa-basket-shopping"></i>
@@ -36,17 +34,18 @@ scrollToTop()
 </script>
 
 <style lang="scss" scoped>
-	.stopScroll{
-		position: fixed;
-	}
 .section {
+	position: relative;
 	min-height: 100vh;
 	width: 100%;
 	.btn-bag {
 		position: fixed;
-		right: 0.1em;
+		right: 0.2em;
 	}
-	
+	.stopScroll {
+		position: fixed;
+		overflow: hidden;
+	}
 }
 .showBag {
 	animation: fade 0.5s forwards;
