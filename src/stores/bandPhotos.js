@@ -28,6 +28,9 @@ export const useBandPhotos = defineStore('bandPhotos', {
 
 			galleryPhotos: [
 				{
+					src: '/images/gallery/9.jpg',
+				},
+				{
 					src: '/images/gallery/8.jpg',
 				},
 				{
