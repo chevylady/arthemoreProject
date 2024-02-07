@@ -13,8 +13,9 @@ export const useShoppingBag = defineStore('shoppingBag', {
 	getters: {
 		total: state => {
 			let sum = 0
+			let deliveryPrice = 16
 			state.itemsInBag.forEach(item => {
-				sum += item.price * item.amount
+				sum += item.price * item.amount + deliveryPrice
 			})
 			return sum
 		},
@@ -33,7 +34,7 @@ export const useShoppingBag = defineStore('shoppingBag', {
 		outOfBag(indexToDelete) {
 			this.itemsInBag = this.itemsInBag.filter(item => this.itemsInBag.indexOf(item) !== indexToDelete)
 		},
-		async sendOrder(nameData, emailAddress, phoneNumber, itemsInBag, total) {
+		async sendOrder(nameData, phoneNumber, emailAddress,machineBoxChosen, itemsInBag, total) {
 			let dateOfOrder = Date()
 			let id = dateOfOrder.toString()
 
@@ -41,7 +42,8 @@ export const useShoppingBag = defineStore('shoppingBag', {
 				Imię: nameData,
 				Email: emailAddress,
 				Telefon: phoneNumber,
-				Product: itemsInBag,
+				Paczkomat: machineBoxChosen,
+				Produkt: itemsInBag,
 				sumaZŁ: total,
 			})
 		},
