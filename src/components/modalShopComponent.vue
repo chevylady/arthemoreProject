@@ -1,6 +1,7 @@
 <template>
-	<div class="section modal-wrapper pt-2" aria-modal="true">
-		<div class="orderBox is-flex is-flex-direction-column is-justify-content-center is-align-items-center">
+	<div class="modal-wrapper py-3" aria-modal="true">
+		<div
+			class="orderBox mt-1 mx-auto is-flex is-flex-direction-column is-justify-content-flex-start is-align-items-center">
 			<div class="is-flex is-flex-direction-column is-justify-content-center is-align-items-center mt-4">
 				<h1 class="title has-text-centered has-text-primary">Twoje zamówienie</h1>
 				<div
@@ -30,116 +31,26 @@
 					<p class="is-size-6 has-text-weight-bold">Do zapłaty: {{ storeShoppingBag.total }} zł</p>
 					<p>Cena zawiera przesyłkę inPost: 16zł!</p>
 				</div>
-			</div>
-
-			<div class="form mt-4">
-				<div class="field">
-					<label class="label" for="name">Imię i nazwisko</label>
-					<div class="control">
-						<input
-							v-model="formData.nameData"
-							name="name"
-							class="input"
-							:class="{ incorrectData: v$.nameData.$error }"
-							type="text"
-							placeholder="imię i nazwisko" />
-					</div>
+				<orderFormComponent />
+				<div class="info-box mx-4 mb-5 pb-5">
+					<p class="px-2 mb-2 pb-5 is-size-6">
+						Po złożeniu zamówienia na Twój adres email zostaną wysłane informacje dotyczące płatności i wysyłki.
+						Płatności automatyczne pojawią się w późniejszym terminie.
+					</p>
 				</div>
-				<div class="field">
-					<label class="label" for="phone">Numer telefonu</label>
-					<div class="control">
-						<input
-							v-model="formData.phoneNumber"
-							name="phoneNumber"
-							class="input"
-							:class="{ incorrectData: v$.phoneNumber.$error }"
-							type="text"
-							placeholder="123456789" />
-					</div>
-				</div>
-				<div class="field">
-					<label class="label" for="email">Email</label>
-					<div class="control">
-						<input
-							v-model="formData.emailAddress"
-							class="input"
-							name="email"
-							:class="{ incorrectData: v$.emailAddress.$error }"
-							type="email"
-							placeholder="Email@examp.com" />
-					</div>
-				</div>
-				<inpostApiComponent @setMachine="setMachine" />
-			</div>
-			<div class="mx-6 my-5 is-flex">
-				<button @click="storeShop.modal = false" class="button is-small is-info is-light mx-1">Wróć</button>
-				<button @click="submitForm()" class="button is-small is-success is-light mx-1">Wyślij</button>
-				<button @click="clearForm(), (storeShop.modal = false)" class="button is-small is-danger is-light mx-1">
-					Wyczyść
-				</button>
-			</div>
-			<div class="info-box mx-4 mb-5 pb-5">
-				<p class="px-2 mb-2 pb-5 is-size-6">
-					Po wysłaniu zamówienia na Twój email zostaną wysłane informacje dotyczące płatności i wysyłki.
-				</p>
 			</div>
 		</div>
 	</div>
 </template>
 <script setup>
-import { useShop } from '../stores/shop'
 import { useShoppingBag } from '../stores/shoppingBag'
-import inpostApiComponent from './inpostApiComponent.vue'
-import { reactive, computed } from 'vue'
-import { useVuelidate } from '@vuelidate/core'
-import { required, email, numeric, minLength } from '@vuelidate/validators'
-
-const storeShop = useShop()
+import orderFormComponent from './orderFormComponent.vue'
 const storeShoppingBag = useShoppingBag()
 
-function setMachine(machineBox) {
-	formData.machineBoxChosen = machineBox
+const scrollToTop = () => {
+	window.scrollTo(0, 0)
 }
-
-const formData = reactive({
-	nameData: '',
-	phoneNumber: null,
-	emailAddress: '',
-	machineBoxChosen: '',
-})
-
-const rules = computed(() => {
-	return {
-		nameData: { required, minLength: minLength(5) },
-		phoneNumber: { required, numeric },
-		emailAddress: { required, email },
-		machineBoxChosen: { required },
-	}
-})
-const v$ = useVuelidate(rules, formData)
-
-const submitForm = async () => {
-	const result = await v$.value.$validate()
-	if (result && formData.machineBoxChosen && storeShoppingBag.itemsInBag.length>0) {
-		storeShoppingBag.sendOrder(
-			formData.nameData,
-			formData.phoneNumber,
-			formData.emailAddress,
-			formData.machineBoxChosen,
-			storeShoppingBag.itemsInBag,
-			storeShoppingBag.total
-		),
-			alert('Wysłano!')
-	} else {
-		alert('Sprawdź swoje zamówienie')
-	}
-}
-
-const clearForm = () => {
-	formData.phoneNumber = null
-	formData.nameData = ''
-	formData.email = ''
-}
+scrollToTop()
 </script>
 <style lang="scss" scoped>
 p,
@@ -152,47 +63,39 @@ label {
 .incorrectData {
 	border: 0.1em solid crimson;
 }
-
-.orderBox {
-	margin: 0 auto;
-	width: 20em;
-	background-color: #070707e0;
-	box-shadow: 0 0 1em cyan;
-	border-radius: 0.3em;
-	.field{
-		width: 100%;
-	}
-}
 .modal-wrapper {
-	position: fixed;
-	left: 0;
-	height: 100vh;
-	width: 100vw;
+	width: 100%;
+	height: 100%;
 	background-color: #000000da;
 	z-index: 500;
-	overflow: auto;
-	.item-container,
-	.separate {
-		width: 100%;
-	}
-	.item-container {
-		height: auto;
-		.item-img {
-			height: 6em;
-			width: 6em;
-			object-fit: cover;
-		}
-		.item-details {
-			width: 14em;
-		}
-		.separate {
-			height: 0.12em;
-		}
-	}
-}
-@media (min-width: 992px){
+	overflow-x: hidden;
 	.orderBox {
-	width: 32em;
+		width: 20em;
+		background-color: #070707e0;
+		box-shadow: 0 0 1em cyan;
+		border-radius: 0.3em;
+		.item-container,
+		.separate {
+			width: 100%;
+		}
+		.item-container {
+			.item-img {
+				height: 6em;
+				width: 6em;
+				object-fit: cover;
+			}
+			.item-details {
+				width: 14em;
+			}
+			.separate {
+				height: 0.12em;
+			}
+		}
+	}
 }
+@media (min-width: 992px) {
+	.modal-wrapper .orderBox {
+		width: 32em;
+	}
 }
 </style>
